@@ -1,0 +1,84 @@
+生成一个长度为100的字符串，字符串中的相邻字符形成的组合（比如 12，23）应该尽量包含从 '00' 到 '99' 的所有两位数组合
+<script>
+  function generateOptimizedString() {
+    let result = ['0'];  // 初始化字符串，從 '0' 開始
+    let used = new Set();
+    let remaining = new Set(Array.from({length: 100}, (_, i) => i.toString().padStart(2, '0')));
+
+    // 標記初始組合並移出未使用集合
+    remaining.delete('00');
+    used.add('00');
+
+    // 回溯生成函數
+    function backtrack() {
+        if (result.length === 100) return true;  // 成功生成100個字符
+
+        let lastDigit = result[result.length - 1];
+        for (let i = 0; i < 10; i++) {
+            let nextDigit = i.toString();
+            let combo = lastDigit + nextDigit;
+
+            // 確保當前組合還未使用過
+            if (remaining.has(combo)) {
+                // 標記為使用過
+                result.push(nextDigit);
+                used.add(combo);
+                remaining.delete(combo);
+
+                // 繼續生成下一個字符
+                if (backtrack()) return true;
+
+                // 回溯：取消當前選擇，嘗試其他路徑
+                result.pop();
+                used.delete(combo);
+                remaining.add(combo);
+            }
+        }
+        return false;  // 無法生成完整的字符串
+    }
+
+    // 開始回溯
+    backtrack();
+
+    return result.join('');
+}
+
+function analyzeCombinations(str) {
+    let combinations = new Set();
+    for (let i = 0; i < str.length - 1; i++) {
+        combinations.add(str.slice(i, i + 2));
+    }
+    return combinations;
+}
+
+try {
+    console.log("開始執行程序");
+    let startTime = Date.now();
+    
+    let optimizedString = generateOptimizedString();
+    
+    let endTime = Date.now();
+    console.log(`執行時間：${(endTime - startTime) / 1000} 秒`);
+    
+    console.log("生成的字符串：", optimizedString);
+    console.log("字符串長度：", optimizedString.length);
+    
+    let combinations = analyzeCombinations(optimizedString);
+    console.log("不同組合的數量：", combinations.size);
+
+    // 檢查缺失的組合
+    let missing = [];
+    for (let i = 0; i < 100; i++) {
+        let combo = i.toString().padStart(2, '0');
+        if (!combinations.has(combo)) {
+            missing.push(combo);
+        }
+    }
+    console.log("缺失的組合：", missing);
+} catch (error) {
+    console.error("執行錯誤：", error);
+}
+
+console.log("程序執行完畢");
+
+</script>

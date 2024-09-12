@@ -1,0 +1,227 @@
+<pre>
+Step 1: 初始化棋盘
+目标：
+我们需要一个 N x N 的棋盘，用来放置皇后。最初的棋盘是空的，用 . 表示。
+
+思路：
+创建一个二维数组来表示棋盘，每个元素初始化为 .。
+N 是棋盘的大小，即 N x N 的正方形。
+这个棋盘的每个位置都可能放置皇后，也可能是空的。
+代码：
+function solveNQueens(N) {
+    // 创建一个 N x N 的棋盘，初始化每个位置为 '.'
+    let board = Array.from({ length: N }, () => Array(N).fill('.'));
+
+    // 输出初始化的棋盘，确认棋盘正确生成
+    console.log("初始化棋盘:");
+    console.log(board.map(row => row.join(' ')).join('\n'));
+    console.log("-----------");
+
+    // 这步棋盘已经初始化好了，接下来我们会实现回溯算法
+}
+解释：
+Array.from({ length: N }) 创建一个长度为 N 的数组。
+Array(N).fill('.') 创建一个长度为 N 的数组，每个位置都初始化为 .。
+通过 console.log() 我们将棋盘打印出来，以确保棋盘初始化正确。
+<hr>
+Step 2: 回溯函数的基本框架
+目标：
+我们需要递归地在每一行中放置皇后。如果能放置皇后且递归到最后一行，说明找到了一种解法，我们将当前棋盘状态保存下来。如果无法放置皇后，我们将回溯到上一行并尝试其他列。
+
+思路：
+编写一个回溯函数 backtrack(row)，它负责在第 row 行中放置皇后。
+当递归到第 N 行时，意味着我们已经成功放置了 N 个皇后，找到了一个解法。
+代码：
+function solveNQueens(N) {
+    let board = Array.from({ length: N }, () => Array(N).fill('.'));
+    let result = [];  // 存储所有解法
+
+    // 回溯函数：负责在第 row 行放置皇后
+    function backtrack(row) {
+        // 当 row 等于 N 时，说明已经成功放置了 N 个皇后
+        if (row === N) {
+            // 将当前棋盘状态保存到 result 中
+            result.push(board.map(row => row.join('')));
+            console.log("找到一个解法:");
+            console.log(board.map(row => row.join(' ')).join('\n'));
+            console.log("-----------");
+            return;
+        }
+
+        // 接下来，我们将尝试在当前行的每一列放置皇后
+    }
+
+    // 从第 0 行开始放置皇后
+    backtrack(0);
+
+    return result;  // 返回所有解法
+}
+解释：
+回溯函数 backtrack(row)：
+如果 row === N，说明我们已经成功在每一行放置了皇后，因此我们将当前棋盘的状态保存为一个解法。
+在这个阶段，我们还没有具体实现皇后的放置逻辑。
+<hr>
+Step 3: 检查皇后是否可以安全放置
+目标：
+我们需要一个函数来检查当前行的某一列是否可以放置皇后。皇后可以攻击同一列、主对角线和副对角线上的其他皇后。因此，我们需要检查这些位置是否已经有皇后。
+
+思路：
+列检查：检查当前列上方是否有其他皇后。
+左上对角线检查：检查当前点的左上方向是否有皇后。
+右上对角线检查：检查当前点的右上方向是否有皇后。
+如果这三个检查都通过，说明这个位置是安全的，可以放置皇后。
+代码：
+function solveNQueens(N) {
+    let board = Array.from({ length: N }, () => Array(N).fill('.'));
+    let result = [];
+
+    // 检查在 (row, col) 放置皇后是否安全
+    function isSafe(row, col) {
+        // 检查同一列
+        for (let i = 0; i < row; i++) {
+            if (board[i][col] === 'Q') return false;  // 如果列上有皇后，返回 false
+        }
+
+        // 检查左上对角线
+        for (let i = row - 1, j = col - 1; i >= 0 && j >= 0; i--, j--) {
+            if (board[i][j] === 'Q') return false;  // 如果左上对角线有皇后，返回 false
+        }
+
+        // 检查右上对角线
+        for (let i = row - 1, j = col + 1; i >= 0 && j < N; i--, j++) {
+            if (board[i][j] === 'Q') return false;  // 如果右上对角线有皇后，返回 false
+        }
+
+        return true;  // 如果安全，返回 true
+    }
+
+    // 回溯函数
+    function backtrack(row) {
+        if (row === N) {
+            result.push(board.map(row => row.join('')));
+            console.log("找到一个解法:");
+            console.log(board.map(row => row.join(' ')).join('\n'));
+            console.log("-----------");
+            return;
+        }
+
+        // 尝试在当前行的每一列放置皇后
+        for (let col = 0; col < N; col++) {
+            if (isSafe(row, col)) {
+                // 下一步：我们将放置皇后并递归进入下一行
+            }
+        }
+    }
+
+    backtrack(0);
+    return result;
+}
+解释：
+isSafe(row, col)：这个函数检查在 (row, col) 位置放置皇后是否安全。我们检查列和两个对角线，如果这些位置都没有皇后，则可以放置皇后。
+目前我们已经实现了检查安全的逻辑，接下来我们需要实现放置皇后和回溯的逻辑。
+<hr>
+Step 4: 放置皇后与回溯
+目标：
+现在我们可以尝试在每一列放置皇后。如果当前位置安全，我们将皇后放置在棋盘上，并递归地处理下一行。递归返回时，我们需要撤销放置（回溯）。
+
+思路：
+在当前位置放置皇后，更新棋盘状态。
+递归调用 backtrack(row + 1) 处理下一行。
+如果递归返回，说明该路径行不通，我们需要撤销放置（将当前位置恢复为空）。
+代码：
+function solveNQueens(N) {
+    let board = Array.from({ length: N }, () => Array(N).fill('.'));
+    let result = [];
+
+    function isSafe(row, col) {
+        for (let i = 0; i < row; i++) {
+            if (board[i][col] === 'Q') return false;
+        }
+        for (let i = row - 1, j = col - 1; i >= 0 && j >= 0; i--, j--) {
+            if (board[i][j] === 'Q') return false;
+        }
+        for (let i = row - 1, j = col + 1; i >= 0 && j < N; i--, j++) {
+            if (board[i][j] === 'Q') return false;
+        }
+        return true;
+    }
+
+    function backtrack(row) {
+        if (row === N) {
+            result.push(board.map(row => row.join('')));
+            console.log("找到一个解法:");
+            console.log(board.map(row => row.join(' ')).join('\n'));
+            console.log("-----------");
+            return;
+        }
+
+        for (let col = 0; col < N; col++) {
+            if (isSafe(row, col)) {
+                // 放置皇后
+                board[row][col] = 'Q';
+                console.log(`放置皇后: 行 ${row}, 列 ${col}`);
+                console.log(board.map(row => row.join(' ')).join('\n'));
+                console.log("-----------");
+
+                // 递归处理下一行
+                backtrack(row + 1);
+
+                // 回溯：撤销选择
+                board[row][col] = '.';
+                console.log(`撤回皇后: 行 ${row}, 列 ${col}`);
+                console.log(board.map(row => row.join(' ')).join('\n'));
+                console.log("-----------");
+            }
+        }
+    }
+
+    backtrack(0);
+    return result;
+}
+解释：
+放置皇后：如果当前位置安全，我们将该位置设置为 'Q'，表示放置皇后。
+递归处理下一行：调用 backtrack(row + 1) 递归地处理下一行的皇后放置。
+回溯：如果递归返回（即该路径行不通），我们将当前位置恢复为空（'.'），撤销之前的选择。
+Step 5: 测试
+最后，我们可以运行代码，观察输出结果以及日志信息，确保递归和回溯的过程都符合预期。
+
+console.log(solveNQueens(4));
+
+</pre>
+
+<script>
+  function solveNQueens(N) {
+    let board = Array.from({ length: N }, () => Array(N).fill("."));
+    let result = [];
+
+    function isSafe(row, col) {
+      for (let i = 0; i < row; i++) {
+        if (board[i][col] === "Q") return false;
+      }
+      for (let i = row - 1, j = col - 1; i >= 0 && j >= 0; i--, j--) {
+        if (board[i][j] === "Q") return false;
+      }
+      for (let i = row - 1, j = col + 1; i >= 0 && j < N; i--, j++) {
+        if (board[i][j] === "Q") return false;
+      }
+      return true;
+    }
+
+    function backtrack(row) {
+      if (row === N) {
+        result.push(board.map((row) => row.join("")));
+      }
+      for (let col = 0; col < N; col++) {
+        if (isSafe(row, col)) {
+          board[row][col] = "Q";
+          backtrack(row + 1);
+          board[row][col] = ".";
+        }
+      }
+    }
+
+    backtrack(0);
+    return result;
+  }
+  console.log(solveNQueens(4));
+</script>

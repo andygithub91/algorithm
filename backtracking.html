@@ -1,0 +1,44 @@
+<pre>
+  https://medium.com/appworks-school/%E9%80%B2%E5%85%A5%E9%81%9E%E8%BF%B4-recursion-%E7%9A%84%E4%B8%96%E7%95%8C-%E4%B8%89-d2fd70b5b171
+
+</pre>
+
+<script>
+  function create(depth, maxDepth) {
+    console.log(depth); // 印出層數
+    if (depth < maxDepth) {
+      create(depth + 1, maxDepth); // 遞歸調用
+    }
+  }
+  create(1, 5);
+  console.log("---");
+</script>
+<script>
+  let result = [];
+  function create(depth, maxDepth, password) {
+    console.log(`進入第${depth}層`);
+    if (depth === maxDepth) {
+      // 最後一層達到即停止
+      console.log(
+        `深度到達第${depth}層最後一層，找到 password:[${password}]，開始撤銷選擇`
+      );
+      result.push([...password]);
+      return;
+    }
+    for (let i = 0; i < 2; i++) {
+      password.push(i + 1); // 將新數字加到密碼中
+      console.log(
+        `深度第${depth}層，選擇：${i + 1}，加入當前 password:[${password}]`
+      );
+      create(depth + 1, maxDepth, password); // 往下層走
+      console.log(`撤銷選擇 ${i + 1} 回到上一層`);
+      password.pop(); // 回溯時移除最後一個元素
+    }
+  }
+  create(0, 2, []);
+  console.log(result);
+</script>
+
+<script></script>
+
+<script></script>

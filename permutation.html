@@ -1,0 +1,53 @@
+<pre>
+通用回溯框架的代码
+function backtrack(路径, 状态) {
+  if (满足结束条件) {
+    保存结果;
+    return;
+  }
+  
+  for (选择 in 所有可能的选择) {
+    // 做选择
+    将该选择加入路径;
+    更新状态为已选择;
+    
+    // 递归进入下一层
+    backtrack(新的路径, 更新后的状态);
+    
+    // 撤销选择
+    将该选择从路径移除;
+    恢复状态为未选择;
+  }
+}
+</pre>
+
+<script>
+  function permute(nums) {
+    let result = [];
+
+    function backtrack(path, used) {
+      if (path.length === nums.length) {
+        result.push([...path]);
+      }
+
+      for (let i = 0; i < used.length; i++) {
+        if (used[i]) {
+          continue;
+        }
+
+        path.push(i);
+        used[i] = true;
+
+        backtrack(path, used);
+
+        path.pop();
+        used[i] = false;
+      }
+    }
+
+    backtrack([], Array(nums.length).fill(false));
+    return result;
+  }
+
+  console.log(permute([1, 2, 3]));
+</script>
